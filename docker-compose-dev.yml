@@ -1,0 +1,41 @@
+version: '2'
+
+services:
+  consumer_sender:
+    image: keymetrics/pm2:latest-stretch
+    restart: unless-stopped
+    container_name: consumer_sender
+    working_dir: /home/node/consumer_sender/
+    volumes:
+    - ./:/home/node/consumer_sender/
+    ports:
+    - "9229:9229"
+    environment:
+      NODE_ENV: development
+    command: "pm2-runtime start pm2_apps.json  --env development"
+
+  mongo:
+    image: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodata:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: consumer
+      MONGO_INITDB_ROOT_PASSWORD: consumer
+
+  rabbit1:
+    image: rabbitmq:3-management
+    restart: unless-stopped
+    container_name: consumer_broker
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - 5472:5672
+      - 14672:15672
+      - 14670:15670
+      - 14675:15675
+  
+  

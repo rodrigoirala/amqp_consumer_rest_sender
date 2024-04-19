@@ -1,0 +1,52 @@
+{
+  "name": "queuesapisender",
+  "version": "3.5.0",
+  "description": "",
+  "private": true,
+  "main": "src/server/app.js",
+  "author": "Rodrigo Irala",
+  "license": "MIT",
+  "keywords": [
+    "queues",
+    "generator"
+  ],
+  "scripts": {
+    "dev": "SERVICE_KEY=some_service_key nodemon --watch src/server --inspect=0.0.0.0 src/server/crons/queue-processor.js",
+    "devemail": "QUEUE_KEY=some_queue_name nodemon --watch src/server --inspect=0.0.0.0 src/server/crons/email-notificator.js",
+    "requeue": "QUEUE_KEY=some_queue_name nodemon --watch src/server --inspect=0.0.0.0 src/server/crons/amqp-requeue.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "async-retry": "^1.3.3",
+    "axios": "0.24.0",
+    "babel-plugin-lodash": "3.3.4",
+    "classnames": "2.2.6",
+    "config": "^3.3.7",
+    "crypto-js": "4.0.0",
+    "dotenv": "8.2.0",
+    "jsonwebtoken": "8.5.1",
+    "koa": "2.7.0",
+    "koa-body": "4.2.0",
+    "koa-jwt": "3.6.0",
+    "koa-logger": "3.2.1",
+    "koa-mount": "4.0.0",
+    "koa-router": "7.4.0",
+    "moment": "2.29.1",
+    "mongodb": "^4.9.1",
+    "nodemailer": "^6.7.8",
+    "nodemon": "1.19.1",
+    "pm2": "^5.2.0",
+    "yup": "0.32.11"
+  },
+  "devDependencies": {
+    "all-contributors-cli": "6.20.0",
+    "url-loader": "2.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/rodrigoirala/token_generator/src/main/"
+  },
+  "engines": {
+    "node": ">= 6"
+  }
+}

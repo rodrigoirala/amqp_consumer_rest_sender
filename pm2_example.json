@@ -1,0 +1,21 @@
+{
+  apps : [
+    {
+      name: "some-pm2-name",
+      script: "./src/server/crons/queue-processor.js",
+      env: {
+        "SERVICE_KEY": "some_service_key",
+        "NODE_ENV": "development"
+      },
+      env_production : {
+        "SERVICE_KEY": "some_service_key",
+        "NODE_ENV": "production"
+      },
+      exec_mode  : "fork",
+      instances: 1,
+      watch_delay: 3,
+      restart_delay: 30000,
+      watch: true
+    }
+  ]
+}

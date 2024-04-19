@@ -1,0 +1,7 @@
+FROM heidiks/rabbitmq-delayed-message-exchange:latest
+
+RUN rabbitmq-plugins enable --offline rabbitmq_management
+RUN rabbitmq-plugins enable --offline rabbitmq_mqtt rabbitmq_web_mqtt
+RUN rabbitmq-plugins enable --offline rabbitmq_shovel 
+RUN rabbitmq-plugins enable --offline rabbitmq_shovel_management 
+RUN rabbitmq-plugins enable --offline rabbitmq_delayed_message_exchange

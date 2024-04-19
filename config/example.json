@@ -1,0 +1,139 @@
+{
+  "port": 3002,
+  "isDev": true,
+  "logDatabase": {
+    "url": "mongodb://some_user:some_pass@some_host:27017",
+    "database": "consumer_log"
+  },
+  "servicesBrokers": {
+    "exampleAMQPServer1": {
+      "hostURL": "amqp://:USER::PASS@some_host",
+      "user": "some_user",
+      "pass": "some_passpass"
+    },
+    "exampleAMQPServer2": {
+      "hostURL": "amqp://:USER::PASS@another_host",
+      "user": "some_user",
+      "pass": "some_pass"
+    }
+  },
+  "requeuer": {
+    "some_queue_name": {
+      "serviceBroker": "exampleAMQPServer1",
+      "sourcePortionToRepublish": "origin",
+      "exchangeToRequeue": "some_exchange_name"
+    }
+  },
+  "amqpMessageGenerator": {
+    "some_fake_generator_name": {
+      "serviceBroker": "exampleAMQPServer1",
+      "exchangeToRequeue": "some_exchange_to_publish"
+    }
+  },
+  "emailNotifications": {
+    "email": {
+      "from": "'Some People' <some.user@gmail.com>",
+      "user": "some.user@gmail.com",
+      "pass": ""
+    },
+    "queues": {
+      "some_queue_name_to_consume": {
+        "serviceBroker": "exampleAMQPServer1",
+        "subject": "Some subject for email",
+        "emails": [
+          "some.receptor@gmail.com"
+        ]
+      }
+    }
+  },
+  "services": {
+    "alegramed-estudios": {
+      "senderType": "singleEndpoint",
+      "serviceBroker": "exampleAMQPServer1",
+      "retrieveQueueName": "some_queue_name",
+      "authHeadersEndpoint": "http://some_host_to_retrieve_auth_headers",
+      "sendEndpoint": "http://some_host/some_endpoint",
+      "sendMethod": "post",
+      "requeue": {
+        "hasToRequeue": true,
+        "messagePortion": "origin",
+        "defaultExchangeQueue": {
+          "name": "topic-default-log",
+          "options": {
+            "durable": true,
+            "autoDelete": false,
+            "arguments": {
+              "x-message-ttl": 86400000
+            }
+          }
+        },
+        "exchangesRoutes": [
+          {
+            "statusBegin": 0,
+            "statusEnd": 400,
+            "messagePortion": "response.body",
+            "exchangeName": "topic-success",
+            "queues": [
+              {
+                "name": "topic-success-log",
+                "options": {
+                  "durable": true,
+                  "arguments": {
+                    "x-message-ttl": 86400000
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "statusBegin": 400,
+            "statusEnd": 500,
+            "messagePortion": "all",
+            "exchangeName": "topic-4xx-errors",
+            "queues": [
+              {
+                "name": "topic-4xx-errors-email",
+                "options": {
+                  "durable": true,
+                  "arguments": {}
+                }
+              },
+              {
+                "name": "topic-4xx-errors-log",
+                "options": {
+                  "durable": true,
+                  "arguments": {
+                    "x-message-ttl": 2592000000
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "statusBegin": 500,
+            "statusEnd": 600,
+            "messagePortion": "origin",
+            "exchangeName": "topic-5xx-errors",
+            "queues": [
+              {
+                "name": "topic-5xx-errors-email",
+                "options": {
+                  "durable": true
+                }
+              },
+              {
+                "name": "topic-5xx-errors-log",
+                "options": {
+                  "durable": true,
+                  "arguments": {
+                    "x-message-ttl": 2592000000
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
